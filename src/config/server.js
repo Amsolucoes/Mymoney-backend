@@ -1,18 +1,20 @@
-const port = 3010
+require('dotenv').config(); // Carrega as variáveis do .env
 
-const bodyParser = require('body-parser')
-const express = require('express')
-const server = express()
-const allowCors = require('./cors')
-const queryParser = require('express-query-int')
+const port = 3010;
 
-server.use(bodyParser.urlencoded({ extended: true}))
-server.use(bodyParser.json())
-server.use(allowCors)
-server.use(queryParser())
+const express = require('express'); 
+const { urlencoded, json } = require('body-parser');
+const allowCors = require('./cors');
+const queryParser = require('express-query-int');
+
+const server = express();
+
+server.use(urlencoded({ extended: true }));
+server.use(json());
+server.use(allowCors);
 
 server.listen(port, function() {
-    console.log(`BACKEND is runnig on port ${port}.`)
-})
+    console.log(`BACKEND is running on port ${port}.`);
+});
 
-module.exports = server
+module.exports = server;

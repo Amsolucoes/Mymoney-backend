@@ -2,7 +2,7 @@ const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("./user");
-const env = require("../../.env");
+require("dotenv").config();
 
 const emailRegex = /\S+@\S+\.\S+/;
 const passwordRegex =
@@ -15,18 +15,24 @@ const sendErrorsFromDB = (res, dbErrors) => {
 };
 
 const login = (req, res, next) => {
+  console.log("🚀 Chegou uma requisição no /login!");
+  console.log("📩 Corpo da requisição:", req.body);
   const email = req.body.email || "";
   const password = req.body.password || "";
 
+  console.log("🔹 Tentando logar com:", email);
+
   User.findOne({ email }, (err, user) => {
     if (err) {
+      console.error("❌ Erro ao buscar usuário no banco:", err);
       return sendErrorsFromDB(res, err);
     } else if (user && bcrypt.compareSync(password, user.password)) {
-      const token = jwt.sign({ ...user }, env.authSecret, {
+      const token = jwt.sign({ id: user._id, email: user.email }, process.env.AUTH_SECRET, {
         expiresIn: "1 day",
       });
+      console.log("🔹 Token gerado no backend:", token);
       const { name, email } = user;
-      res.json({ name, email, token });
+      res.json({ token, userId: user._id });
     } else {
       return res.status(400).send({ errors: ["Usuário/Senha inválidos"] });
     }
@@ -62,7 +68,7 @@ const signup = (req, res, next) => {
 
   const salt = bcrypt.genSaltSync();
   const passwordHash = bcrypt.hashSync(password, salt);
-  if (!bcrypt.compareSync(confirmPassword, passwordHash)) {
+  if (password !== confirmPassword) {
     return res.status(400).send({ errors: ["Senhas não conferem."] });
   }
 
