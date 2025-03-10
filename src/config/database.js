@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
-const url = process.env.MONGO_URI || "mongodb://localhost/mymoney";
+const url = process.env.MONGO_URI;
 
 mongoose
   .connect(url, {
