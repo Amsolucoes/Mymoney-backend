@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const url = process.env.MONGO_URI;
 
+if (!url) {
+  console.error("❌ MONGO_URI não está definida.");
+  process.exit(1);
+}
+
 mongoose
   .connect(url, {
     useNewUrlParser: true,
