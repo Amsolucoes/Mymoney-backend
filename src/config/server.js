@@ -1,6 +1,6 @@
 require('dotenv').config(); // Carrega as variáveis do .env
 
-const port = 3010;
+const port = process.env.PORT || 8080;
 
 const express = require('express'); 
 const { urlencoded, json } = require('body-parser');
